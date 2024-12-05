@@ -16,9 +16,6 @@ Habit Tracker is a minimalistic Flutter application designed to help users build
 - Toggle dark/light mode
 - Enable/disable notifications
 
-## Screenshots
-[//TODO: Add app screenshots]
-
 ## Getting Started 🚀
 
 ### Prerequisites
@@ -30,7 +27,7 @@ Habit Tracker is a minimalistic Flutter application designed to help users build
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/habit_tracker.git
+git clone https://github.com/SudipThapa-Arc/Habitos.git
 cd habit_tracker
 ```
 
