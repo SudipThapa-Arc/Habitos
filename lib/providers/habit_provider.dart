@@ -45,6 +45,21 @@ class HabitProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleHabitCompletion(Habit habit) {
+    if (habit.isCompletedToday()) {
+      // If already completed today, remove the last record
+      if (habit.records.isNotEmpty) {
+        habit.records.removeLast();
+        habit.currentStreak = habit.currentStreak > 0 ? habit.currentStreak - 1 : 0;
+      }
+    } else {
+      // Mark as completed
+      habit.completeToday();
+    }
+    habit.save();
+    notifyListeners();
+  }
+
   void toggleNotifications(bool value) {
     _notificationsEnabled = value;
     notifyListeners();

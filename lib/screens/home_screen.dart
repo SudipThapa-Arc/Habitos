@@ -96,57 +96,92 @@ class HabitTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(12),
-        leading: CircleAvatar(
-          radius: 25,
-          backgroundColor: habit.isCompletedToday() ? Colors.green : Colors.blue,
-          child: Icon(
-            habit.isCompletedToday() ? Icons.check : Icons.access_time,
-            color: Colors.white,
-          ),
+    return Dismissible(
+      key: Key(habit.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
         ),
-        title: Text(
-          habit.name,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LinearProgressIndicator(
-                value: habit.isCompletedToday() ? 1.0 : 0.0,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  habit.isCompletedToday() ? Colors.green : Colors.blue,
-                ),
+      ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Delete Habit'),
+            content: const Text('Are you sure you want to delete this habit?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Streak: ${habit.currentStreak} days',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Delete'),
               ),
             ],
           ),
-        ),
-        trailing: IconButton(
-          icon: Icon(
-            habit.isCompletedToday()
-                ? Icons.check_circle
-                : Icons.check_circle_outline,
-            color: habit.isCompletedToday() ? Colors.green : Colors.grey,
+        );
+      },
+      onDismissed: (direction) {
+        Provider.of<HabitProvider>(context, listen: false).deleteHabit(habit);
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(12),
+          leading: CircleAvatar(
+            radius: 25,
+            backgroundColor: habit.isCompletedToday() ? Colors.green : Colors.blue,
+            child: Icon(
+              habit.isCompletedToday() ? Icons.check : Icons.access_time,
+              color: Colors.white,
+            ),
           ),
-          onPressed: habit.isCompletedToday()
-              ? null
-              : () {
-                  Provider.of<HabitProvider>(context, listen: false)
-                      .completeHabit(habit);
-                },
+          title: Text(
+            habit.name,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LinearProgressIndicator(
+                  value: habit.isCompletedToday() ? 1.0 : 0.0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    habit.isCompletedToday() ? Colors.green : Colors.blue,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Streak: ${habit.currentStreak} days',
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              habit.isCompletedToday()
+                  ? Icons.check_circle
+                  : Icons.check_circle_outline,
+              color: habit.isCompletedToday() ? Colors.green : Colors.grey,
+            ),
+            onPressed: habit.isCompletedToday()
+                ? null
+                : () {
+                    Provider.of<HabitProvider>(context, listen: false)
+                        .completeHabit(habit);
+                  },
+          ),
         ),
       ),
     );
