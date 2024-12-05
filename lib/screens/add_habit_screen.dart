@@ -7,7 +7,6 @@ class AddHabitScreen extends StatefulWidget {
   const AddHabitScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _AddHabitScreenState createState() => _AddHabitScreenState();
 }
 
@@ -21,18 +20,27 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Habit'),
+        title: const Text(
+          'Add New Habit',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Habit Name',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  prefixIcon: const Icon(Icons.task_alt),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -42,23 +50,45 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                 },
                 onSaved: (value) => _habitName = value!,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               ListTile(
-                title: const Text('Reminder Time'),
-                trailing: Text(_reminderTime.format(context)),
-                onTap: _selectTime,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                title: const Text(
+                  'Reminder Time',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                trailing: GestureDetector(
+                  onTap: _selectTime,
+                  child: Chip(
+                    backgroundColor: Colors.blue[100],
+                    label: Text(
+                      _reminderTime.format(context),
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               DropdownButtonFormField<HabitFrequency>(
                 value: _frequency,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Frequency',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[100],
                 ),
                 items: HabitFrequency.values
                     .map((freq) => DropdownMenuItem(
                           value: freq,
-                          child: Text(freq.toString().split('.').last),
+                          child: Text(
+                            freq.toString().split('.').last.toUpperCase(),
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ))
                     .toList(),
                 onChanged: (value) {
@@ -69,10 +99,18 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
                   }
                 },
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
+              const SizedBox(height: 30),
+              ElevatedButton.icon(
                 onPressed: _saveHabit,
-                child: const Text('Create Habit'),
+                icon: const Icon(Icons.add),
+                label: const Text('Create Habit'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  textStyle: const TextStyle(fontSize: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ],
           ),

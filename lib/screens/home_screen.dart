@@ -11,7 +11,12 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Habit Tracker'),
+        title: const Text(
+          'Habit Tracker',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -22,16 +27,16 @@ class HomeScreen extends StatelessWidget {
       body: Consumer<HabitProvider>(
         builder: (context, habitProvider, child) {
           final habits = habitProvider.habits;
-          
+
           if (habits.isEmpty) {
             return const Center(
               child: Text(
                 'No habits yet. Add a new habit!',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             );
           }
-          
+
           return ListView.builder(
             itemCount: habits.length,
             itemBuilder: (context, index) {
@@ -41,12 +46,13 @@ class HomeScreen extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AddHabitScreen()),
         ),
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Habit'),
       ),
     );
   }
@@ -54,12 +60,16 @@ class HomeScreen extends StatelessWidget {
   void _showSettingsBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
         final habitProvider = Provider.of<HabitProvider>(context);
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               SwitchListTile(
                 title: const Text('Enable Notifications'),
@@ -88,34 +98,55 @@ class HabitTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        title: Text(habit.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LinearProgressIndicator(
-              value: habit.isCompletedToday() ? 1.0 : 0.0,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(
-                habit.isCompletedToday() ? Colors.green : Colors.blue,
+        contentPadding: const EdgeInsets.all(12),
+        leading: CircleAvatar(
+          radius: 25,
+          backgroundColor: habit.isCompletedToday() ? Colors.green : Colors.blue,
+          child: Icon(
+            habit.isCompletedToday() ? Icons.check : Icons.access_time,
+            color: Colors.white,
+          ),
+        ),
+        title: Text(
+          habit.name,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LinearProgressIndicator(
+                value: habit.isCompletedToday() ? 1.0 : 0.0,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  habit.isCompletedToday() ? Colors.green : Colors.blue,
+                ),
               ),
-            ),
-            Text('Streak: ${habit.currentStreak} days'),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                'Streak: ${habit.currentStreak} days',
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
         trailing: IconButton(
           icon: Icon(
-            habit.isCompletedToday() 
-              ? Icons.check_circle 
-              : Icons.check_circle_outline,
-            color: habit.isCompletedToday() ? Colors.green : null,
+            habit.isCompletedToday()
+                ? Icons.check_circle
+                : Icons.check_circle_outline,
+            color: habit.isCompletedToday() ? Colors.green : Colors.grey,
           ),
           onPressed: habit.isCompletedToday()
-            ? null 
-            : () {
-                Provider.of<HabitProvider>(context, listen: false)
-                  .completeHabit(habit);
-              },
+              ? null
+              : () {
+                  Provider.of<HabitProvider>(context, listen: false)
+                      .completeHabit(habit);
+                },
         ),
       ),
     );

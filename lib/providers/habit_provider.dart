@@ -34,7 +34,8 @@ class HabitProvider extends ChangeNotifier {
   }
 
   void deleteHabit(Habit habit) {
-    habit.delete();
+    // Remove the habit from Hive
+    _habitBox.delete(habit.key);
     notifyListeners();
   }
 
